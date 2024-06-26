@@ -46,7 +46,14 @@ class BuilderTest extends TestCase
     {
         $res = Foo::query()->where('id', 1)->get();
 
-        $this->assertSame(['id' => 1, 'name' => 'foo'], $res->first());
+        $this->assertSame(['id' => 1, 'name' => 'foo', 'summary' => 'foo'], $res->first());
+    }
+
+    public function testLike()
+    {
+        $res = Foo::query()->where('summary', 'like', '*o*')->get();
+
+        $this->assertSame(3, $res->count());
     }
 }
 

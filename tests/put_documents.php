@@ -49,20 +49,20 @@ $indices->putMapping([
         'properties' => [
             'id' => ['type' => 'long'],
             'name' => ['type' => 'keyword'],
+            'summary' => ['type' => 'text'],
         ],
     ],
 ]);
 
 $docs = [
-    ['id' => 1, 'name' => 'foo'],
-    ['id' => 2, 'name' => 'limx'],
-    ['id' => 3, 'name' => 'leo'],
-    ['id' => 4, 'name' => 'fofo'],
-    ['id' => 5, 'name' => 'lala'],
+    ['id' => 1, 'name' => 'foo', 'summary' => 'foo'],
+    ['id' => 2, 'name' => 'limx', 'summary' => 'limx'],
+    ['id' => 3, 'name' => 'leo', 'summary' => 'leo'],
+    ['id' => 4, 'name' => 'fofo', 'summary' => 'fofo'],
+    ['id' => 5, 'name' => 'lala', 'summary' => 'lala'],
 ];
 
 foreach ($docs as $doc) {
-    var_dump($doc);
     $client->update([
         'index' => $foo->getIndex(),
         'id' => $doc['id'],

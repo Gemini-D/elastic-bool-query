@@ -23,10 +23,6 @@ class Builder
 
     public int $from = 0;
 
-    public array $operators = [
-        '=' => 'term',
-    ];
-
     public function __construct(protected DocumentInterface $index)
     {
     }
@@ -38,11 +34,9 @@ class Builder
             $operator = '=';
         }
 
-        $operator = $this->operators[$operator] ?? $operator;
+        $operator = Operator::from($operator);
 
-        $this->bool['must'][] = [
-            $operator => [$key => $value],
-        ];
+        $this->bool['must'][] = $operator->buildQuery($key, $value);
 
         return $this;
     }
