@@ -30,11 +30,11 @@ jobs:
         run: |
           docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --name elasticsearch elasticsearch:${{ matrix.elasticsearch }}
           sleep 5
-          php tests/put_documents.php
       - name: Setup Packages
         run: composer update -o --no-scripts
       - name: Run Test Cases
         run: |
+          php tests/put_documents.php
           vendor/bin/php-cs-fixer fix --dry-run
           composer analyse
           composer test
