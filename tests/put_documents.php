@@ -28,7 +28,7 @@ class Foo extends Document
 }
 
 $foo = new Foo();
-$client = $foo->getClient($foo->getConfig());
+$client = $foo->getClient();
 $indices = $client->indices();
 
 $exists = $indices->exists(['index' => 'foo']);
