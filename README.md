@@ -1,5 +1,5 @@
-# component-creator
+# ElasticSearch Bool 查询器
 
 ```
-composer create-project hyperf/component-creator
+composer require gemini/elastic-bool-query
 ```

@@ -12,18 +12,14 @@ declare(strict_types=1);
 
 namespace Fan\ElasticBoolQuery;
 
-class ConfigProvider
+use Fan\ElasticBoolQuery\Concerns\BuildClient;
+
+abstract class Document implements DocumentInterface
 {
-    public function __invoke(): array
+    use BuildClient;
+
+    public static function query(): Builder
     {
-        return [
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
-        ];
+        return new Builder(new static());
     }
 }

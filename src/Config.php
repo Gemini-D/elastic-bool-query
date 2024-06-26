@@ -12,18 +12,14 @@ declare(strict_types=1);
 
 namespace Fan\ElasticBoolQuery;
 
-class ConfigProvider
+class Config
 {
-    public function __invoke(): array
+    public function __construct(protected array $hosts)
     {
-        return [
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
-        ];
+    }
+
+    public function getHosts(): array
+    {
+        return $this->hosts;
     }
 }
