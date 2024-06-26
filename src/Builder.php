@@ -12,14 +12,16 @@ declare(strict_types=1);
 
 namespace Fan\ElasticBoolQuery;
 
-use Elastic\Elasticsearch\Client;
-use Elastic\Elasticsearch\ClientBuilder;
-use GuzzleHttp;
+use Elastic\Elasticsearch\Response\Elasticsearch;
 use Hyperf\Collection\Collection;
 
 class Builder
 {
     public array $bool = [];
+
+    public int $size = 10;
+
+    public int $from = 0;
 
     public array $operators = [
         '=' => 'term',
@@ -45,25 +47,45 @@ class Builder
         return $this;
     }
 
-    public function get(): Collection
+    public function from(int $from): static
     {
-        $response = $this->client()->search([
-            'index' => $this->index->getIndex(),
-            'body' => [
-                'query' => [
-                    'bool' => $this->bool,
-                ],
-            ],
-        ]);
-
-        return new Collection($response->asArray());
+        $this->from = $from;
+        return $this;
     }
 
-    public function client(): Client
+    public function size(int $size): static
     {
-        return ClientBuilder::create()
-            ->setHttpClient(new GuzzleHttp\Client())
-            ->setHosts($this->index->getConfig()->getHosts())
-            ->build();
+        $this->size = $size;
+        return $this;
+    }
+
+    public function toBody(): array
+    {
+        return [
+            'query' => [
+                'bool' => $this->bool,
+            ],
+            'size' => $this->size,
+            'from' => $this->from,
+        ];
+    }
+
+    public function get(): Collection
+    {
+        $response = $this->search()->asArray();
+
+        $result = [];
+        foreach ($response['hits']['hits'] as $hit) {
+            $result[] = $hit['_source'];
+        }
+        return new Collection($result);
+    }
+
+    public function search(): Elasticsearch
+    {
+        return $this->index->getClient()->search([
+            'index' => $this->index->getIndex(),
+            'body' => $this->toBody(),
+        ]);
     }
 }

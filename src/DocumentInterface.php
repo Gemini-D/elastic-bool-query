@@ -12,9 +12,13 @@ declare(strict_types=1);
 
 namespace Fan\ElasticBoolQuery;
 
+use Elastic\Elasticsearch\Client;
+
 interface DocumentInterface
 {
     public function getIndex(): string;
 
     public function getConfig(): Config;
+
+    public function getClient(): Client;
 }

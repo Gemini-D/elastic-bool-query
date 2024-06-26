@@ -12,14 +12,22 @@ declare(strict_types=1);
 
 namespace Fan\ElasticBoolQuery;
 
-use Fan\ElasticBoolQuery\Concerns\BuildClient;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
+use GuzzleHttp;
 
 abstract class Document implements DocumentInterface
 {
-    use BuildClient;
-
     public static function query(): Builder
     {
         return new Builder(new static());
+    }
+
+    public function getClient(): Client
+    {
+        return ClientBuilder::create()
+            ->setHttpClient(new GuzzleHttp\Client())
+            ->setHosts($this->getConfig()->getHosts())
+            ->build();
     }
 }
