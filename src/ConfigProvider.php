@@ -24,6 +24,14 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for elasticsearch bool query component.',
+                    'source' => __DIR__ . '/../publish/elastic_bool_query.php',
+                    'destination' => BASE_PATH . '/config/autoload/elastic_bool_query.php',
+                ],
+            ],
         ];
     }
 }
