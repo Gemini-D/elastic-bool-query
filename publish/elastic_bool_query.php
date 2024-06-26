@@ -9,11 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
-namespace Fan\ElasticBoolQuery\Exception;
-
-use RuntimeException;
-
-class InvalidMappingException extends RuntimeException
-{
-}
+return [
+    'hosts' => [
+        '127.0.0.1:9200',
+    ],
+];
