@@ -26,6 +26,11 @@ abstract class Document implements DocumentInterface
         return new Builder(new static());
     }
 
+    public function getKey(): string
+    {
+        return 'id';
+    }
+
     public function getConfig(): Config
     {
         if (function_exists('Hyperf\Config\config')) {

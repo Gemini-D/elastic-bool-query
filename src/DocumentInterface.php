@@ -21,4 +21,6 @@ interface DocumentInterface
     public function getConfig(): Config;
 
     public function getClient(): Client;
+
+    public function getKey(): string;
 }

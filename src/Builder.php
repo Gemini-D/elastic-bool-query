@@ -13,17 +13,18 @@ declare(strict_types=1);
 namespace Fan\ElasticBoolQuery;
 
 use Elastic\Elasticsearch\Response\Elasticsearch;
+use Fan\ElasticBoolQuery\Exception\RuntimeException;
 use Hyperf\Collection\Collection;
 
 class Builder
 {
-    public array $bool = [];
+    public array $where = [];
 
     public int $size = 10;
 
     public int $from = 0;
 
-    public function __construct(protected DocumentInterface $index)
+    public function __construct(protected DocumentInterface $document)
     {
     }
 
@@ -34,9 +35,9 @@ class Builder
             $operator = '=';
         }
 
-        $operator = Operator::from($operator);
-
-        $this->bool['must'][] = $operator->buildQuery($key, $value);
+        $this->where[] = [
+            $key, $operator, $value,
+        ];
 
         return $this;
     }
@@ -55,13 +56,47 @@ class Builder
 
     public function toBody(): array
     {
+        $bool = [];
+        foreach ($this->where as [$key, $operator, $value]) {
+            $operator = Operator::from($operator);
+
+            $bool['must'][] = $operator->buildQuery($key, $value);
+        }
+
         return [
             'query' => [
-                'bool' => $this->bool,
+                'bool' => $bool,
             ],
             'size' => $this->size,
             'from' => $this->from,
         ];
+    }
+
+    public function update(array $doc, mixed $id = null): bool
+    {
+        $id ??= $doc[$this->document->getKey()] ?? null;
+        if ($id === null) {
+            foreach ($this->where as [$key, $operator, $value]) {
+                if ($key === $this->document->getKey() && $operator === '=') {
+                    $id = $value;
+                }
+            }
+        }
+
+        if ($id === null) {
+            throw new RuntimeException('The document does not contain any ID');
+        }
+
+        return $this->document->getClient()->update([
+            'index' => $this->document->getIndex(),
+            'id' => $id,
+            'body' => [
+                'doc' => $doc,
+                'doc_as_upsert' => true,
+            ],
+            'refresh' => true,
+            'retry_on_conflict' => 5,
+        ])->asBool();
     }
 
     public function get(): Collection
@@ -77,8 +112,8 @@ class Builder
 
     public function search(): Elasticsearch
     {
-        return $this->index->getClient()->search([
-            'index' => $this->index->getIndex(),
+        return $this->document->getClient()->search([
+            'index' => $this->document->getIndex(),
             'body' => $this->toBody(),
         ]);
     }
