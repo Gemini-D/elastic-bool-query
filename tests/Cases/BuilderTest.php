@@ -61,7 +61,7 @@ class BuilderTest extends TestCase
         $res = Foo::query()->where('id', 1)->get();
 
         $summary = $res->first()['summary'];
-        
+
         Foo::query()->where('id', 1)->update(['summary' => 'foofoo']);
 
         $res = Foo::query()->where('id', 1)->get();

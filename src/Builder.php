@@ -74,14 +74,7 @@ class Builder
 
     public function update(array $doc, mixed $id = null): bool
     {
-        $id ??= $doc[$this->document->getKey()] ?? null;
-        if ($id === null) {
-            foreach ($this->where as [$key, $operator, $value]) {
-                if ($key === $this->document->getKey() && $operator === '=') {
-                    $id = $value;
-                }
-            }
-        }
+        $id ??= $doc[$this->document->getKey()] ?? $this->getKeyValue();
 
         if ($id === null) {
             throw new RuntimeException('The document does not contain any ID');
@@ -116,5 +109,16 @@ class Builder
             'index' => $this->document->getIndex(),
             'body' => $this->toBody(),
         ]);
+    }
+
+    protected function getKeyValue(): mixed
+    {
+        foreach ($this->where as [$key, $operator, $value]) {
+            if ($key === $this->document->getKey() && $operator === '=') {
+                return $value;
+            }
+        }
+
+        return null;
     }
 }
