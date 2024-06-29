@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace HyperfTest\Cases;
 
 use Fan\ElasticBoolQuery\Builder;
-use Fan\ElasticBoolQuery\Config;
-use Fan\ElasticBoolQuery\Document;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -167,18 +165,5 @@ class BuilderTest extends TestCase
         $this->assertSame(2, $res->count());
         $this->assertSame(2, $res->first()['id']);
         $this->assertSame(5, $res->last()['id']);
-    }
-}
-
-class Foo extends Document
-{
-    public function getIndex(): string
-    {
-        return 'foo';
-    }
-
-    public function getConfig(): Config
-    {
-        return new Config(['127.0.0.1:9200']);
     }
 }

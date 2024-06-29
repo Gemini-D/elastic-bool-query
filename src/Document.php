@@ -26,6 +26,11 @@ abstract class Document implements DocumentInterface
         return new Builder(new static());
     }
 
+    public static function indices(): Indices
+    {
+        return new Indices(new static());
+    }
+
     public function getKey(): string
     {
         return 'id';
@@ -39,6 +44,11 @@ abstract class Document implements DocumentInterface
         }
 
         throw new RuntimeException('You must rewrite `getConfig()` for your documents.');
+    }
+
+    public function getMapping(): array
+    {
+        throw new RuntimeException('You must rewrite `getMapping()` for your documents.');
     }
 
     public function getClient(): Client

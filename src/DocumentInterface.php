@@ -23,4 +23,6 @@ interface DocumentInterface
     public function getClient(): Client;
 
     public function getKey(): string;
+
+    public function getMapping(): array;
 }
