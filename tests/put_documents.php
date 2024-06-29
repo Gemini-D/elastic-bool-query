@@ -25,34 +25,27 @@ class Foo extends Document
     {
         return new Config(['127.0.0.1:9200']);
     }
+
+    public function getMapping(): array
+    {
+        return [
+            'id' => ['type' => 'long'],
+            'name' => ['type' => 'keyword'],
+            'summary' => ['type' => 'text'],
+        ];
+    }
 }
 
 $foo = new Foo();
 $client = $foo->getClient();
 $indices = $client->indices();
+$indices = Foo::indices();
 
-$exists = $indices->exists(['index' => 'foo']);
-if (! $exists->asBool()) {
-    $indices->create([
-        'index' => $foo->getIndex(),
-        'params' => [
-            'settings' => [
-                'number_of_shards' => 4,
-            ],
-        ],
-    ]);
+if (! $indices->exists()) {
+    $indices->create(['number_of_shards' => 4]);
 }
 
-$indices->putMapping([
-    'index' => $foo->getIndex(),
-    'body' => [
-        'properties' => [
-            'id' => ['type' => 'long'],
-            'name' => ['type' => 'keyword'],
-            'summary' => ['type' => 'text'],
-        ],
-    ],
-]);
+$indices->putMapping();
 
 $docs = [
     ['id' => 1, 'name' => 'foo', 'summary' => 'foo'],

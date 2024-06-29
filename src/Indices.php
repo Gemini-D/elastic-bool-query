@@ -52,4 +52,17 @@ class Indices
             ->delete(['index' => $this->document->getIndex()])
             ->asBool();
     }
+
+    public function putMapping(): bool
+    {
+        return $this->document->getClient()
+            ->indices()
+            ->putMapping([
+                'index' => $this->document->getIndex(),
+                'body' => [
+                    'properties' => $this->document->getMapping(),
+                ],
+            ])
+            ->asBool();
+    }
 }
