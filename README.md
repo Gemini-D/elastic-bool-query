@@ -14,6 +14,17 @@ https://github.com/Gemini-D/elastic-bool-query/blob/main/tests/Cases/BuilderTest
 
 https://github.com/Gemini-D/elastic-bool-query/blob/main/tests/Cases/IndicesTest.php
 
+## 命令
+
+- 基于索引生成模型
+
+-I 索引名
+-M 模型全名
+
+```shell
+ php bin/hyperf.php gen:elastic model -I foo -M App\\Query\\Foo
+```
+
 ## Hyperf
 
 ### 发布配置
