@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Fan\ElasticBoolQuery;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 class Indices
 {
     protected Builder $builder;
@@ -24,5 +26,30 @@ class Indices
     public function exists(): bool
     {
         return $this->document->getClient()->indices()->exists(['index' => $this->document->getIndex()])->asBool();
+    }
+
+    public function create(
+        #[ArrayShape([
+            'number_of_shards' => 'int',
+        ])]
+        array $settings = []
+    ): bool {
+        return $this->document->getClient()
+            ->indices()
+            ->create([
+                'index' => $this->document->getIndex(),
+                'params' => [
+                    'settings' => $settings,
+                ],
+            ])
+            ->asBool();
+    }
+
+    public function delete(): bool
+    {
+        return $this->document->getClient()
+            ->indices()
+            ->delete(['index' => $this->document->getIndex()])
+            ->asBool();
     }
 }

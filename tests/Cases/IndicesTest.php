@@ -25,4 +25,18 @@ class IndicesTest extends TestCase
         $this->assertTrue(Foo::indices()->exists());
         $this->assertFalse(Bar::indices()->exists());
     }
+
+    public function testCreateAndDelete()
+    {
+        $res = Bar::indices()->create([
+            'number_of_shards' => 2,
+        ]);
+        $this->assertTrue($res);
+        $this->assertTrue(Bar::indices()->exists());
+
+        $res = Bar::indices()->delete();
+        $this->assertTrue($res);
+
+        $this->assertFalse(Bar::indices()->exists());
+    }
 }
