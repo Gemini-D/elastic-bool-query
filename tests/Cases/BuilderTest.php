@@ -70,6 +70,15 @@ class BuilderTest extends TestCase
 
         Foo::query()->where('id', 1)->update(['summary' => $summary]);
     }
+
+    public function testLTAndGT()
+    {
+        $res = Foo::query()->where('id', '>', 4)->get();
+        $this->assertSame(1, $res->count());
+
+        $res = Foo::query()->where('id', '>=', 4)->get();
+        $this->assertSame(2, $res->count());
+    }
 }
 
 class Foo extends Document

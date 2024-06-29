@@ -18,6 +18,14 @@ enum Operator: string
     case EQUAL = '=';
     case WILDCARD = 'wildcard';
     case LIKE = 'like';
+    case GT_SYMBOL = '>';
+    case GT = 'gt';
+    case GTE_SYMBOL = '>=';
+    case GTE = 'gte';
+    case LT_SYMBOL = '<';
+    case LT = 'lt';
+    case LTE = 'lte';
+    case LTE_SYMBOL = '<=';
 
     public function buildQuery(string $key, mixed $value): array
     {
@@ -31,6 +39,18 @@ enum Operator: string
                 'wildcard' => [
                     $key => $value,
                 ],
+            ],
+            self::GT_SYMBOL, self::GT => [
+                'range' => [$key => ['gt' => $value]],
+            ],
+            self::LT_SYMBOL, self::LT => [
+                'range' => [$key => ['lt' => $value]],
+            ],
+            self::GTE_SYMBOL, self::GTE => [
+                'range' => [$key => ['gte' => $value]],
+            ],
+            self::LTE_SYMBOL, self::LTE => [
+                'range' => [$key => ['lte' => $value]],
             ],
         };
     }
