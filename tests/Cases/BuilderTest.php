@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HyperfTest\Cases;
 
+use Fan\ElasticBoolQuery\Builder;
 use Fan\ElasticBoolQuery\Config;
 use Fan\ElasticBoolQuery\Document;
 use PHPUnit\Framework\TestCase;
@@ -126,6 +127,20 @@ class BuilderTest extends TestCase
         $res = Foo::query()->where('id', '!=', 1)->orderBy('id', 'asc')->get();
 
         $this->assertSame(2, $res->first()['id']);
+    }
+
+    public function testClosure()
+    {
+        $res = Foo::query()->where('id', '>', 1)
+            ->where(function (Builder $builder) {
+                $builder->where('id', 'in', [1, 2, 5]);
+            })
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $this->assertSame(2, $res->count());
+        $this->assertSame(2, $res->first()['id']);
+        $this->assertSame(5, $res->last()['id']);
     }
 }
 

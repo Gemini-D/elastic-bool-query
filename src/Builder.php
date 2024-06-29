@@ -15,6 +15,7 @@ namespace Fan\ElasticBoolQuery;
 use Closure;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 use Fan\ElasticBoolQuery\Exception\RuntimeException;
+use Fan\ElasticBoolQuery\Query\SubClosureQuery;
 use Fan\ElasticBoolQuery\Query\SubQuery;
 use Fan\ElasticBoolQuery\Query\SubQueryInterface;
 use Hyperf\Collection\Collection;
@@ -37,9 +38,9 @@ class Builder
     {
     }
 
-    public function where(Closure|string $key, mixed $operator, mixed $value = null): static
+    public function where(Closure|string $key, mixed $operator = null, mixed $value = null): static
     {
-        if (is_callable($key)) {
+        if (func_num_args() === 1 && is_callable($key)) {
             return $this->whereClosure($key);
         }
 
@@ -55,6 +56,12 @@ class Builder
 
     public function whereClosure(Closure $closure): static
     {
+        $builder = new static($this->document);
+
+        $closure($builder);
+
+        $this->where[] = new SubClosureQuery($builder, 'must');
+
         return $this;
     }
 
