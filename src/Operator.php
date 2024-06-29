@@ -26,6 +26,8 @@ enum Operator: string
     case LT = 'lt';
     case LTE = 'lte';
     case LTE_SYMBOL = '<=';
+    case IN = 'in';
+    case TERMS = 'terms';
 
     public function buildQuery(string $key, mixed $value): array
     {
@@ -52,6 +54,7 @@ enum Operator: string
             self::LTE_SYMBOL, self::LTE => [
                 'range' => [$key => ['lte' => $value]],
             ],
+            self::IN, self::TERMS => ['terms' => [$key => $value]]
         };
     }
 }

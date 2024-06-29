@@ -79,6 +79,13 @@ class BuilderTest extends TestCase
         $res = Foo::query()->where('id', '>=', 4)->get();
         $this->assertSame(2, $res->count());
     }
+
+    public function testTerms()
+    {
+        $res = Foo::query()->where('id', 'in', [1, 2])->get();
+
+        $this->assertSame(2, $res->count());
+    }
 }
 
 class Foo extends Document
