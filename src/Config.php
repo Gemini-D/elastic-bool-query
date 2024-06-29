@@ -12,14 +12,27 @@ declare(strict_types=1);
 
 namespace Fan\ElasticBoolQuery;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 class Config
 {
-    public function __construct(protected array $hosts)
-    {
+    public function __construct(
+        protected array $hosts,
+        #[ArrayShape([
+            'refresh' => 'bool',
+            'retry_on_conflict' => 'int',
+        ])]
+        protected array $updateSettings = [],
+    ) {
     }
 
     public function getHosts(): array
     {
         return $this->hosts;
+    }
+
+    public function getUpdateSettings(): array
+    {
+        return $this->updateSettings;
     }
 }

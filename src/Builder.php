@@ -19,6 +19,7 @@ use Fan\ElasticBoolQuery\Query\SubClosureQuery;
 use Fan\ElasticBoolQuery\Query\SubQuery;
 use Fan\ElasticBoolQuery\Query\SubQueryInterface;
 use Hyperf\Collection\Collection;
+use JetBrains\PhpStorm\ArrayShape;
 use stdClass;
 
 class Builder
@@ -130,13 +131,21 @@ class Builder
         ];
     }
 
-    public function update(array $doc, mixed $id = null): bool
-    {
+    public function update(
+        array $doc,
+        mixed $id = null,
+        #[ArrayShape([
+            'refresh' => 'bool',
+            'retry_on_conflict' => 'int',
+        ])]
+        ?array $settings = null
+    ): bool {
         $id ??= $doc[$this->document->getKey()] ?? $this->getKeyValue();
-
         if ($id === null) {
             throw new RuntimeException('The document does not contain any ID');
         }
+
+        $settings ??= $this->document->getConfig()->getUpdateSettings();
 
         return $this->document->getClient()->update([
             'index' => $this->document->getIndex(),
@@ -145,8 +154,7 @@ class Builder
                 'doc' => $doc,
                 'doc_as_upsert' => true,
             ],
-            'refresh' => true,
-            'retry_on_conflict' => 5,
+            ...$settings,
         ])->asBool();
     }
 

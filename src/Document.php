@@ -40,7 +40,10 @@ abstract class Document implements DocumentInterface
     {
         if (function_exists('Hyperf\Config\config')) {
             $config = config('elastic_bool_query', ['hosts' => ['127.0.0.1:9200']]);
-            return new Config($config['hosts']);
+            return new Config(
+                $config['hosts'],
+                $config['update_settings'] ?? []
+            );
         }
 
         throw new RuntimeException('You must rewrite `getConfig()` for your documents.');

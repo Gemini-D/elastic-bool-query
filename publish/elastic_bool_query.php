@@ -13,4 +13,8 @@ return [
     'hosts' => [
         '127.0.0.1:9200',
     ],
+    'update_settings' => [
+        'refresh' => true,
+        'retry_on_conflict' => 5,
+    ],
 ];
