@@ -152,6 +152,22 @@ class BuilderTest extends TestCase
         $this->assertSame(2, $res->first()['id']);
         $this->assertSame(5, $res->last()['id']);
     }
+
+    public function testOrWhereClosure()
+    {
+        $res = Foo::query()->where('id', '>', 1)
+            ->where(function (Builder $builder) {
+                $builder->orWhere('id', 1)
+                    ->orWhere('id', 2)
+                    ->orWhere('id', 5);
+            })
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $this->assertSame(2, $res->count());
+        $this->assertSame(2, $res->first()['id']);
+        $this->assertSame(5, $res->last()['id']);
+    }
 }
 
 class Foo extends Document
