@@ -42,7 +42,7 @@ abstract class Document implements DocumentInterface
             $config = config('elastic_bool_query', ['hosts' => ['127.0.0.1:9200']]);
             return new Config(
                 $config['hosts'],
-                $config['update_settings'] ?? []
+                $config['update_settings'] ?? ['refresh' => true, 'retry_on_conflict' => 5]
             );
         }
 
