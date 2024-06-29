@@ -56,14 +56,5 @@ $docs = [
 ];
 
 foreach ($docs as $doc) {
-    $client->update([
-        'index' => $foo->getIndex(),
-        'id' => $doc['id'],
-        'body' => [
-            'doc' => $doc,
-            'doc_as_upsert' => true,
-        ],
-        'refresh' => true,
-        'retry_on_conflict' => 5,
-    ]);
+    Foo::query()->update($doc, $doc['id']);
 }
