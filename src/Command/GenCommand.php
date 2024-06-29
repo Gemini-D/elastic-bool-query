@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Fan\ElasticBoolQuery\Command;
 
 use Fan\ElasticBoolQuery\CustomDocument;
+use Fan\ElasticBoolQuery\Document;
 use Fan\ElasticBoolQuery\Exception\RuntimeException;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
@@ -53,6 +54,17 @@ class GenCommand extends HyperfCommand
 
     public function createIndex(string $model): int
     {
+        /** @var Document $model */
+        $model = new $model();
+
+        $indices = $model->newIndices();
+
+        if (! $indices->exists()) {
+            $indices->create();
+        }
+
+        $indices->putMapping();
+
         return 0;
     }
 

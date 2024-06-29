@@ -25,6 +25,44 @@ https://github.com/Gemini-D/elastic-bool-query/blob/main/tests/Cases/IndicesTest
  php bin/hyperf.php gen:elastic model -I foo -M App\\Query\\Foo
 ```
 
+- 基于模型生成索引
+
+假设模型为
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Query;
+
+use Fan\ElasticBoolQuery\Document;
+
+class Foo extends Document
+{
+    public function getIndex(): string
+    {
+        return 'foo';
+    }
+
+    public function getMapping(): array
+    {
+        return [
+            'id' => ['type' => 'long'],
+            'name' => ['type' => 'keyword'],
+            'summary' => ['type' => 'text'],
+        ];
+    }
+}
+
+```
+
+-M 模型全名
+
+```shell
+php bin/hyperf.php gen:elastic index -M App\\Query\\Foo
+```
+
 ## Hyperf
 
 ### 发布配置
