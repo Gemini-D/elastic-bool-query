@@ -97,6 +97,13 @@ class BuilderTest extends TestCase
 
         $this->assertSame(5, $res->first()['id']);
     }
+
+    public function testNotEqual()
+    {
+        $res = Foo::query()->where('id', '!=', 1)->orderBy('id', 'asc')->get();
+
+        $this->assertSame(2, $res->first()['id']);
+    }
 }
 
 class Foo extends Document

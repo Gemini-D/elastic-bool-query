@@ -19,13 +19,13 @@ use stdClass;
 
 class Builder
 {
-    public array $where = [];
+    protected array $where = [];
 
-    public int $size = 10;
+    protected int $size = 10;
 
-    public int $from = 0;
+    protected int $from = 0;
 
-    public array $orderBy = [];
+    protected array $orderBy = [];
 
     public function __construct(protected DocumentInterface $document)
     {
@@ -69,7 +69,7 @@ class Builder
         foreach ($this->where as [$key, $operator, $value]) {
             $operator = Operator::from($operator);
 
-            $bool['must'][] = $operator->buildQuery($key, $value);
+            $bool[$operator->getTag()][] = $operator->buildQuery($key, $value);
         }
 
         $body = [];

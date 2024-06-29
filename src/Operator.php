@@ -16,6 +16,8 @@ enum Operator: string
 {
     case TERM = 'term';
     case EQUAL = '=';
+    case NOT_EQUAL = '!=';
+    case NOT_EQUAL2 = '<>';
     case WILDCARD = 'wildcard';
     case LIKE = 'like';
     case GT_SYMBOL = '>';
@@ -29,10 +31,18 @@ enum Operator: string
     case IN = 'in';
     case TERMS = 'terms';
 
+    public function getTag(): string
+    {
+        return match ($this) {
+            self::NOT_EQUAL, self::NOT_EQUAL2 => 'must_not',
+            default => 'must'
+        };
+    }
+
     public function buildQuery(string $key, mixed $value): array
     {
         return match ($this) {
-            self::TERM, self::EQUAL => [
+            self::TERM, self::EQUAL, self::NOT_EQUAL, self::NOT_EQUAL2 => [
                 'term' => [
                     $key => $value,
                 ],
