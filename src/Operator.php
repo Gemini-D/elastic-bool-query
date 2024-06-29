@@ -67,4 +67,9 @@ enum Operator: string
             self::IN, self::TERMS => ['terms' => [$key => $value]]
         };
     }
+
+    public function isEqual(): bool
+    {
+        return $this === self::TERM || $this === self::EQUAL;
+    }
 }

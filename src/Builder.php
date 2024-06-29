@@ -12,13 +12,19 @@ declare(strict_types=1);
 
 namespace Fan\ElasticBoolQuery;
 
+use Closure;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 use Fan\ElasticBoolQuery\Exception\RuntimeException;
+use Fan\ElasticBoolQuery\Query\SubQuery;
+use Fan\ElasticBoolQuery\Query\SubQueryInterface;
 use Hyperf\Collection\Collection;
 use stdClass;
 
 class Builder
 {
+    /**
+     * @var SubQueryInterface[]
+     */
     protected array $where = [];
 
     protected int $size = 10;
@@ -31,17 +37,24 @@ class Builder
     {
     }
 
-    public function where(string $key, mixed $operator, mixed $value = null): static
+    public function where(Closure|string $key, mixed $operator, mixed $value = null): static
     {
+        if (is_callable($key)) {
+            return $this->whereClosure($key);
+        }
+
         if (func_num_args() === 2) {
             $value = $operator;
             $operator = '=';
         }
 
-        $this->where[] = [
-            $key, $operator, $value,
-        ];
+        $this->where[] = new SubQuery($key, Operator::from($operator), $value);
 
+        return $this;
+    }
+
+    public function whereClosure(Closure $closure): static
+    {
         return $this;
     }
 
@@ -63,27 +76,30 @@ class Builder
         return $this;
     }
 
-    public function toBody(): array
+    public function toBool(): array
     {
         $bool = [];
-        foreach ($this->where as [$key, $operator, $value]) {
-            $operator = Operator::from($operator);
-
-            $bool[$operator->getTag()][] = $operator->buildQuery($key, $value);
-        }
-
-        $body = [];
-        if ($this->orderBy) {
-            $body['sort'] = $this->orderBy;
+        foreach ($this->where as $subQuery) {
+            $bool[$subQuery->getTag()][] = $subQuery->buildQuery();
         }
 
         if (! $bool) {
             $bool['must'][] = ['match_all' => new stdClass()];
         }
 
+        return $bool;
+    }
+
+    public function toBody(): array
+    {
+        $body = [];
+        if ($this->orderBy) {
+            $body['sort'] = $this->orderBy;
+        }
+
         return [
             'query' => [
-                'bool' => $bool,
+                'bool' => $this->toBool(),
             ],
             'size' => $this->size,
             'from' => $this->from,
@@ -130,11 +146,27 @@ class Builder
         ]);
     }
 
+    public function rawSearch(array $body): Collection
+    {
+        $response = $this->document->getClient()->search([
+            'index' => $this->document->getIndex(),
+            'body' => $body,
+        ])->asArray();
+
+        $result = [];
+        foreach ($response['hits']['hits'] as $hit) {
+            $result[] = $hit['_source'];
+        }
+        return new Collection($result);
+    }
+
     protected function getKeyValue(): mixed
     {
-        foreach ($this->where as [$key, $operator, $value]) {
-            if ($key === $this->document->getKey() && $operator === '=') {
-                return $value;
+        foreach ($this->where as $subQuery) {
+            if ($subQuery instanceof SubQuery) {
+                if ($subQuery->key === $this->document->getKey() && $subQuery->operator->isEqual()) {
+                    return $subQuery->value;
+                }
             }
         }
 

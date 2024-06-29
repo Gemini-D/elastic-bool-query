@@ -22,6 +22,29 @@ use PHPUnit\Framework\TestCase;
  */
 class BuilderTest extends TestCase
 {
+    public function testRawQuery()
+    {
+        $res = Foo::query()->rawSearch([
+            'query' => [
+                'bool' => [
+                    'must' => [
+                        ['range' => ['id' => ['gt' => 1]]],
+                        [
+                            'bool' => [
+                                'should' => [
+                                    ['term' => ['id' => 2]],
+                                    ['term' => ['id' => 5]],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertSame(2, $res->count());
+    }
+
     public function testWhere()
     {
         $body = Foo::query()->where('id', 1)->from(1)->size(5)->toBody();
