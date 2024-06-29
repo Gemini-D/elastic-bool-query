@@ -43,7 +43,7 @@ class BuilderTest extends TestCase
             ],
         ]);
 
-        $this->assertSame(2, $res->count());
+        $this->assertSame(2, count($res->asArray()['hits']['hits']));
     }
 
     public function testWhere()

@@ -169,18 +169,12 @@ class Builder
         ]);
     }
 
-    public function rawSearch(array $body): Collection
+    public function rawSearch(array $body): Elasticsearch
     {
-        $response = $this->document->getClient()->search([
+        return $this->document->getClient()->search([
             'index' => $this->document->getIndex(),
             'body' => $body,
-        ])->asArray();
-
-        $result = [];
-        foreach ($response['hits']['hits'] as $hit) {
-            $result[] = $hit['_source'];
-        }
-        return new Collection($result);
+        ]);
     }
 
     protected function getKeyValue(): mixed
