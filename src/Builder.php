@@ -15,6 +15,7 @@ namespace Fan\ElasticBoolQuery;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 use Fan\ElasticBoolQuery\Exception\RuntimeException;
 use Hyperf\Collection\Collection;
+use stdClass;
 
 class Builder
 {
@@ -23,6 +24,8 @@ class Builder
     public int $size = 10;
 
     public int $from = 0;
+
+    public array $orderBy = [];
 
     public function __construct(protected DocumentInterface $document)
     {
@@ -54,6 +57,12 @@ class Builder
         return $this;
     }
 
+    public function orderBy(string $field, string $direction = 'ASC'): static
+    {
+        $this->orderBy[] = [$field => $direction];
+        return $this;
+    }
+
     public function toBody(): array
     {
         $bool = [];
@@ -63,12 +72,22 @@ class Builder
             $bool['must'][] = $operator->buildQuery($key, $value);
         }
 
+        $body = [];
+        if ($this->orderBy) {
+            $body['sort'] = $this->orderBy;
+        }
+
+        if (! $bool) {
+            $bool['must'][] = ['match_all' => new stdClass()];
+        }
+
         return [
             'query' => [
                 'bool' => $bool,
             ],
             'size' => $this->size,
             'from' => $this->from,
+            ...$body,
         ];
     }
 

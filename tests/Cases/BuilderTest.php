@@ -86,6 +86,17 @@ class BuilderTest extends TestCase
 
         $this->assertSame(2, $res->count());
     }
+
+    public function testOrderBy()
+    {
+        $res = Foo::query()->orderBy('id', 'asc')->get();
+
+        $this->assertSame(1, $res->first()['id']);
+
+        $res = Foo::query()->where('id', '<=', 5)->orderBy('id', 'desc')->get();
+
+        $this->assertSame(5, $res->first()['id']);
+    }
 }
 
 class Foo extends Document
