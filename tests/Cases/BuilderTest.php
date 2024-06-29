@@ -73,6 +73,16 @@ class BuilderTest extends TestCase
         $this->assertSame(['id' => 1, 'name' => 'foo', 'summary' => 'foo'], $res->first());
     }
 
+    public function testOrWhere()
+    {
+        $res = Foo::query()->orWhere('id', 1)->orWhere('id', 2)->orderBy('id', 'asc')->get();
+
+        $this->assertSame(1, $res->first()['id']);
+        $this->assertSame(2, $res->last()['id']);
+
+        $this->assertSame(2, $res->count());
+    }
+
     public function testLike()
     {
         $res = Foo::query()->where('summary', 'like', '*o*')->get();

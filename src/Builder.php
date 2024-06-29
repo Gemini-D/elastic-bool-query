@@ -49,18 +49,34 @@ class Builder
             $operator = '=';
         }
 
-        $this->where[] = new SubQuery($key, Operator::from($operator), $value);
+        $this->where[] = new SubQuery($key, Operator::from($operator), $value, 'and');
 
         return $this;
     }
 
-    public function whereClosure(Closure $closure): static
+    public function orWhere(Closure|string $key, mixed $operator = null, mixed $value = null): static
+    {
+        if (func_num_args() === 1 && is_callable($key)) {
+            return $this->whereClosure($key, 'should');
+        }
+
+        if (func_num_args() === 2) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        $this->where[] = new SubQuery($key, Operator::from($operator), $value, 'or');
+
+        return $this;
+    }
+
+    public function whereClosure(Closure $closure, string $tag = 'must'): static
     {
         $builder = new static($this->document);
 
         $closure($builder);
 
-        $this->where[] = new SubClosureQuery($builder, 'must');
+        $this->where[] = new SubClosureQuery($builder, $tag);
 
         return $this;
     }

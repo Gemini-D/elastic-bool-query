@@ -16,7 +16,7 @@ use Fan\ElasticBoolQuery\Operator;
 
 class SubQuery implements SubQueryInterface
 {
-    public function __construct(public string $key, public Operator $operator, public mixed $value)
+    public function __construct(public string $key, public Operator $operator, public mixed $value, public string $boolean = 'and')
     {
     }
 
@@ -27,6 +27,12 @@ class SubQuery implements SubQueryInterface
 
     public function getTag(): string
     {
-        return $this->operator->getTag();
+        return match ($this->boolean) {
+            'or' => match ($this->operator->getTag()) {
+                'must_not' => 'should_not',
+                default => 'should',
+            },
+            default => $this->operator->getTag()
+        };
     }
 }
