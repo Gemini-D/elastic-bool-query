@@ -23,12 +23,22 @@ abstract class Document implements DocumentInterface
 {
     public static function query(): Builder
     {
-        return new Builder(new static());
+        return (new static())->newQuery();
     }
 
     public static function indices(): Indices
     {
-        return new Indices(new static());
+        return (new static())->newIndices();
+    }
+
+    public function newQuery(): Builder
+    {
+        return new Builder($this);
+    }
+
+    public function newIndices(): Indices
+    {
+        return new Indices($this);
     }
 
     public function getKey(): string

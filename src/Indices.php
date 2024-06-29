@@ -65,4 +65,14 @@ class Indices
             ])
             ->asBool();
     }
+
+    public function getMapping(): array
+    {
+        return $this->document->getClient()
+            ->indices()
+            ->getMapping([
+                'index' => $this->document->getIndex(),
+            ])
+            ->asArray();
+    }
 }
