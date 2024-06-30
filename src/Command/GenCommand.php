@@ -101,6 +101,14 @@ class GenCommand extends HyperfCommand
         $code = str_replace('__MODEL__', $modelName, $code);
         $code = str_replace('__INDEX__', $index, $code);
 
+        $mapping = $mapping[$index]['mappings']['properties'];
+        $properties = '';
+        foreach ($mapping as $property => $item) {
+            $properties .= "'{$property}' => ['type' => '{$item['type']}']," . PHP_EOL;
+        }
+
+        $code = str_replace('__MAPPING__', $properties, $code);
+
         file_put_contents($modelPath, $code);
 
         return 0;
@@ -121,6 +129,13 @@ class __MODEL__ extends Document
     public function getIndex(): string
     {
         return "__INDEX__";
+    }
+    
+    public function getMapping(): array 
+    {
+        return [
+        __MAPPING__
+        ];
     }
 }';
     }
