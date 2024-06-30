@@ -104,7 +104,11 @@ class GenCommand extends HyperfCommand
         $mapping = $mapping[$index]['mappings']['properties'];
         $properties = '';
         foreach ($mapping as $property => $item) {
-            $properties .= "'{$property}' => ['type' => '{$item['type']}']," . PHP_EOL;
+            $properties .= "'{$property}' => [";
+            foreach ($item as $key => $value) {
+                $properties .= "'{$key}' => '{$value}',";
+            }
+            $properties .= '],' . PHP_EOL;
         }
 
         $code = str_replace('__MAPPING__', $properties, $code);
