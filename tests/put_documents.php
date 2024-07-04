@@ -58,3 +58,10 @@ $docs = [
 foreach ($docs as $doc) {
     Foo::query()->update($doc, $doc['id']);
 }
+
+$res = Foo::query()->bulk([
+    ['id' => 6, 'name' => 'elastic', 'summary' => uniqid()],
+    ['id' => 7, 'name' => 'elastic2', 'summary' => uniqid()],
+]);
+
+var_dump($res);

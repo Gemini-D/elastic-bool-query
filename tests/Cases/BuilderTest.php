@@ -106,10 +106,10 @@ class BuilderTest extends TestCase
     public function testLTAndGT()
     {
         $res = Foo::query()->where('id', '>', 4)->get();
-        $this->assertSame(1, $res->count());
+        $this->assertSame(3, $res->count());
 
         $res = Foo::query()->where('id', '>=', 4)->get();
-        $this->assertSame(2, $res->count());
+        $this->assertSame(4, $res->count());
     }
 
     public function testTerms()
@@ -165,5 +165,21 @@ class BuilderTest extends TestCase
         $this->assertSame(2, $res->count());
         $this->assertSame(2, $res->first()['id']);
         $this->assertSame(5, $res->last()['id']);
+    }
+
+    public function testBulk()
+    {
+        $res = Foo::query()->bulk([
+            ['id' => 6, 'name' => 'elastic', 'summary' => $id = uniqid()],
+            ['id' => 7, 'name' => 'elastic2', 'summary' => $id2 = uniqid()],
+        ]);
+
+        $this->assertTrue($res);
+
+        $first = Foo::query()->where('id', 6)->get()->first();
+        $this->assertSame($id, $first['summary']);
+
+        $first = Foo::query()->where('id', 7)->get()->first();
+        $this->assertSame($id2, $first['summary']);
     }
 }

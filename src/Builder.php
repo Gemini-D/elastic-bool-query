@@ -131,6 +131,34 @@ class Builder
         ];
     }
 
+    public function bulk(
+        array $docs,
+        #[ArrayShape([
+            'refresh' => 'bool',
+            'retry_on_conflict' => 'int',
+        ])]
+        ?array $settings = null
+    ): bool {
+        $settings ??= $this->document->getConfig()->getUpdateSettings();
+
+        $body = [];
+        foreach ($docs as $doc) {
+            $body[] = [
+                'index' => [
+                    '_index' => $this->document->getIndex(),
+                    '_id' => $doc[$this->document->getKey()],
+                ],
+            ];
+
+            $body[] = $doc;
+        }
+
+        return $this->document->getClient()->bulk([
+            'body' => $body,
+            ...$settings,
+        ])->asBool();
+    }
+
     public function update(
         array $doc,
         mixed $id = null,
