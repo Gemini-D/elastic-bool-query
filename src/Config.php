@@ -44,11 +44,6 @@ class Config
         return $this->writeHosts;
     }
 
-    public function getHosts(): array
-    {
-        return $this->hosts;
-    }
-
     public function getUpdateSettings(): array
     {
         return $this->updateSettings;
