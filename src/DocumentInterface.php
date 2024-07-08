@@ -20,7 +20,9 @@ interface DocumentInterface
 
     public function getConfig(): Config;
 
-    public function getClient(): Client;
+    public function getWriteClient(): Client;
+
+    public function getReadClient(): Client;
 
     public function getKey(): string;
 

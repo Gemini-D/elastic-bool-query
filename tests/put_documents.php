@@ -37,7 +37,7 @@ class Foo extends Document
 }
 
 $foo = new Foo();
-$client = $foo->getClient();
+$client = $foo->getWriteClient();
 $indices = $client->indices();
 $indices = Foo::indices();
 

@@ -17,7 +17,8 @@ use JetBrains\PhpStorm\ArrayShape;
 class Config
 {
     public function __construct(
-        protected array $hosts,
+        protected array $writeHosts,
+        protected array $readHosts = [],
         #[ArrayShape([
             'refresh' => 'bool',
             'retry_on_conflict' => 'int',
@@ -28,6 +29,19 @@ class Config
         ])]
         protected array $indicesSettings = [],
     ) {
+        if (! $this->readHosts) {
+            $this->readHosts = $this->writeHosts;
+        }
+    }
+
+    public function getReadHosts(): array
+    {
+        return $this->readHosts;
+    }
+
+    public function getWriteHosts(): array
+    {
+        return $this->writeHosts;
     }
 
     public function getHosts(): array

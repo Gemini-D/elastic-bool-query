@@ -24,6 +24,6 @@ class Foo extends Document
 
     public function getConfig(): Config
     {
-        return new Config(['127.0.0.1:9200'], ['refresh' => true, 'retry_on_conflict' => 5]);
+        return new Config(['127.0.0.1:9200'], updateSettings: ['refresh' => true, 'retry_on_conflict' => 5]);
     }
 }

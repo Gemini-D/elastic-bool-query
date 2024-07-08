@@ -25,7 +25,7 @@ class Indices
 
     public function exists(): bool
     {
-        return $this->document->getClient()->indices()->exists(['index' => $this->document->getIndex()])->asBool();
+        return $this->document->getReadClient()->indices()->exists(['index' => $this->document->getIndex()])->asBool();
     }
 
     public function create(
@@ -35,7 +35,7 @@ class Indices
         ?array $settings = null
     ): bool {
         $settings ??= $this->document->getConfig()->getIndicesSettings();
-        return $this->document->getClient()
+        return $this->document->getWriteClient()
             ->indices()
             ->create([
                 'index' => $this->document->getIndex(),
@@ -48,7 +48,7 @@ class Indices
 
     public function delete(): bool
     {
-        return $this->document->getClient()
+        return $this->document->getWriteClient()
             ->indices()
             ->delete(['index' => $this->document->getIndex()])
             ->asBool();
@@ -56,7 +56,7 @@ class Indices
 
     public function putMapping(): bool
     {
-        return $this->document->getClient()
+        return $this->document->getWriteClient()
             ->indices()
             ->putMapping([
                 'index' => $this->document->getIndex(),
@@ -69,7 +69,7 @@ class Indices
 
     public function getMapping(): array
     {
-        return $this->document->getClient()
+        return $this->document->getReadClient()
             ->indices()
             ->getMapping([
                 'index' => $this->document->getIndex(),

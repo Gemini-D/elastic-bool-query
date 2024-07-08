@@ -51,7 +51,8 @@ abstract class Document implements DocumentInterface
         if (function_exists('Hyperf\Config\config')) {
             $config = config('elastic_bool_query', ['hosts' => ['127.0.0.1:9200']]);
             return new Config(
-                $config['hosts'],
+                $config['write']['hosts'] ?? $config['hosts'],
+                $config['read']['hosts'] ?? $config['hosts'],
                 $config['update_settings'] ?? ['refresh' => true, 'retry_on_conflict' => 5],
                 $config['indices_settings'] ?? ['number_of_shards' => 4],
             );
@@ -65,11 +66,19 @@ abstract class Document implements DocumentInterface
         throw new RuntimeException('You must rewrite `getMapping()` for your documents.');
     }
 
-    public function getClient(): Client
+    public function getWriteClient(): Client
     {
         return ClientBuilder::create()
             ->setHttpClient(new GuzzleHttp\Client())
-            ->setHosts($this->getConfig()->getHosts())
+            ->setHosts($this->getConfig()->getWriteHosts())
+            ->build();
+    }
+
+    public function getReadClient(): Client
+    {
+        return ClientBuilder::create()
+            ->setHttpClient(new GuzzleHttp\Client())
+            ->setHosts($this->getConfig()->getReadHosts())
             ->build();
     }
 }

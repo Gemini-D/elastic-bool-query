@@ -163,7 +163,7 @@ class Builder
             $body[] = $doc;
         }
 
-        return $this->document->getClient()->bulk([
+        return $this->document->getWriteClient()->bulk([
             'body' => $body,
             ...$settings,
         ])->asBool();
@@ -185,7 +185,7 @@ class Builder
 
         $settings ??= $this->document->getConfig()->getUpdateSettings();
 
-        return $this->document->getClient()->update([
+        return $this->document->getWriteClient()->update([
             'index' => $this->document->getIndex(),
             'id' => $id,
             'body' => [
@@ -209,7 +209,7 @@ class Builder
 
     public function search(): Elasticsearch
     {
-        return $this->document->getClient()->search([
+        return $this->document->getReadClient()->search([
             'index' => $this->document->getIndex(),
             'body' => $this->toBody(),
         ]);
@@ -217,7 +217,7 @@ class Builder
 
     public function rawSearch(array $body): Elasticsearch
     {
-        return $this->document->getClient()->search([
+        return $this->document->getReadClient()->search([
             'index' => $this->document->getIndex(),
             'body' => $body,
         ]);
