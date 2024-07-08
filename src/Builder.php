@@ -207,6 +207,24 @@ class Builder
         return new Collection($result);
     }
 
+    /**
+     * @return array{int, array}
+     */
+    public function paginate(): array
+    {
+        $body = $this->toBody();
+        $body['track_total_hits'] = true;
+        $response = $this->rawSearch($body)->asArray();
+
+        $total = $response['hits']['total']['value'];
+        $result = [];
+        foreach ($response['hits']['hits'] as $hit) {
+            $result[] = $hit['_source'];
+        }
+
+        return [$total, new Collection($result)];
+    }
+
     public function search(): Elasticsearch
     {
         return $this->document->getReadClient()->search([
