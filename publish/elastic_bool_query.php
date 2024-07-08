@@ -17,4 +17,7 @@ return [
         'refresh' => true,
         'retry_on_conflict' => 5,
     ],
+    'indices_settings' => [
+        'number_of_shards' => 4,
+    ],
 ];

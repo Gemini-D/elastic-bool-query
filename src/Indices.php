@@ -32,8 +32,9 @@ class Indices
         #[ArrayShape([
             'number_of_shards' => 'int',
         ])]
-        array $settings = []
+        ?array $settings = null
     ): bool {
+        $settings ??= $this->document->getConfig()->getIndicesSettings();
         return $this->document->getClient()
             ->indices()
             ->create([

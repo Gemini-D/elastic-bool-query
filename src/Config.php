@@ -23,6 +23,10 @@ class Config
             'retry_on_conflict' => 'int',
         ])]
         protected array $updateSettings = [],
+        #[ArrayShape([
+            'number_of_shards' => 'int',
+        ])]
+        protected array $indicesSettings = [],
     ) {
     }
 
@@ -34,5 +38,10 @@ class Config
     public function getUpdateSettings(): array
     {
         return $this->updateSettings;
+    }
+
+    public function getIndicesSettings(): array
+    {
+        return $this->indicesSettings;
     }
 }
