@@ -94,6 +94,16 @@ class Builder
         return $this;
     }
 
+    public function offset(int $offset): static
+    {
+        return $this->from($offset);
+    }
+
+    public function limit(int $limit): static
+    {
+        return $this->size($limit);
+    }
+
     public function orderBy(string $field, string $direction = 'ASC'): static
     {
         $this->orderBy[] = [$field => $direction];
