@@ -18,6 +18,8 @@ interface DocumentInterface
 {
     public function getIndex(): string;
 
+    public function getSearchIndex(): string;
+
     public function getConfig(): Config;
 
     public function getWriteClient(): Client;

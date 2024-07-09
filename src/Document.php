@@ -21,6 +21,11 @@ use function Hyperf\Config\config;
 
 abstract class Document implements DocumentInterface
 {
+    public function getSearchIndex(): string
+    {
+        return $this->getIndex();
+    }
+
     public static function query(): Builder
     {
         return (new static())->newQuery();

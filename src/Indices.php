@@ -25,7 +25,7 @@ class Indices
 
     public function exists(): bool
     {
-        return $this->document->getReadClient()->indices()->exists(['index' => $this->document->getIndex()])->asBool();
+        return $this->document->getReadClient()->indices()->exists(['index' => $this->document->getSearchIndex()])->asBool();
     }
 
     public function create(
@@ -72,7 +72,7 @@ class Indices
         return $this->document->getReadClient()
             ->indices()
             ->getMapping([
-                'index' => $this->document->getIndex(),
+                'index' => $this->document->getSearchIndex(),
             ])
             ->asArray();
     }

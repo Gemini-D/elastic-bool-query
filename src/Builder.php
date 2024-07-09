@@ -228,7 +228,7 @@ class Builder
     public function search(): Elasticsearch
     {
         return $this->document->getReadClient()->search([
-            'index' => $this->document->getIndex(),
+            'index' => $this->document->getSearchIndex(),
             'body' => $this->toBody(),
         ]);
     }
@@ -236,7 +236,7 @@ class Builder
     public function rawSearch(array $body): Elasticsearch
     {
         return $this->document->getReadClient()->search([
-            'index' => $this->document->getIndex(),
+            'index' => $this->document->getSearchIndex(),
             'body' => $body,
         ]);
     }
