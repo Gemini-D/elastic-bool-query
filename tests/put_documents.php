@@ -41,9 +41,10 @@ $client = $foo->getWriteClient();
 $indices = $client->indices();
 $indices = Foo::indices();
 
-if (! $indices->exists()) {
-    $indices->create(['number_of_shards' => 4]);
+if ($indices->exists()) {
+    $indices->delete();
 }
+$indices->create(['number_of_shards' => 4]);
 
 $indices->putMapping();
 
@@ -62,6 +63,8 @@ foreach ($docs as $doc) {
 $res = Foo::query()->bulk([
     ['id' => 6, 'name' => 'elastic', 'summary' => uniqid()],
     ['id' => 7, 'name' => 'elastic2', 'summary' => uniqid()],
+    ['id' => 8, 'name' => '我是中文', 'summary' => '我是中文'],
+    ['id' => 9, 'name' => '我是中文啊', 'summary' => '我是中文啊'],
 ]);
 
 var_dump($res);

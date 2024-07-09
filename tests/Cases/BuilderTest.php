@@ -82,6 +82,15 @@ class BuilderTest extends TestCase
         $this->assertSame(json_encode(['_id' => '1', 'id' => 1, 'name' => 'foo', 'summary' => 'foo']), json_encode($res));
     }
 
+    public function testLikeChinese()
+    {
+        $res = Foo::query()->where('summary', 'like', '*中*')->get()->first();
+        $this->assertSame(8, $res['id']);
+
+        $res = Foo::query()->where('name', 'like', '*中文*')->get()->first();
+        $this->assertSame(8, $res['id']);
+    }
+
     public function testOrWhere()
     {
         $res = Foo::query()->orWhere('id', 1)->orWhere('id', 2)->orderBy('id', 'asc')->get();
@@ -94,9 +103,9 @@ class BuilderTest extends TestCase
 
     public function testLike()
     {
-        $res = Foo::query()->where('summary', 'like', '*o*')->get();
+        $res = Foo::query()->where('summary', 'like', '*fo*')->get();
 
-        $this->assertSame(3, $res->count());
+        $this->assertSame(2, $res->count());
     }
 
     public function testPaginate()
@@ -125,7 +134,7 @@ class BuilderTest extends TestCase
     public function testLTAndGT()
     {
         $res = Foo::query()->where('id', '>', 4)->get();
-        $this->assertSame(3, $res->count());
+        $this->assertSame(5, $res->count());
 
         $res = Foo::query()->where('id', '>=', 4)->get();
         $this->assertSame(4, $res->count());
