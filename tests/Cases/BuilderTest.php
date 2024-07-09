@@ -68,15 +68,15 @@ class BuilderTest extends TestCase
     {
         $res = Foo::query()->where('id', 1)->get();
 
-        $this->assertSame(['id' => 1, 'name' => 'foo', 'summary' => 'foo'], $res->first());
+        $this->assertSame(['id' => 1, 'name' => 'foo', 'summary' => 'foo'], $res->first()->source);
     }
 
     public function testOrWhere()
     {
         $res = Foo::query()->orWhere('id', 1)->orWhere('id', 2)->orderBy('id', 'asc')->get();
 
-        $this->assertSame(1, $res->first()['id']);
-        $this->assertSame(2, $res->last()['id']);
+        $this->assertSame(1, $res->first()->source['id']);
+        $this->assertSame(2, $res->last()->source['id']);
 
         $this->assertSame(2, $res->count());
     }
@@ -100,13 +100,13 @@ class BuilderTest extends TestCase
     {
         $res = Foo::query()->where('id', 1)->get();
 
-        $summary = $res->first()['summary'];
+        $summary = $res->first()->source['summary'];
 
         Foo::query()->where('id', 1)->update(['summary' => 'foofoo']);
 
         $res = Foo::query()->where('id', 1)->get();
 
-        $this->assertSame('foofoo', $res->first()['summary']);
+        $this->assertSame('foofoo', $res->first()->source['summary']);
 
         Foo::query()->where('id', 1)->update(['summary' => $summary]);
     }
@@ -131,18 +131,18 @@ class BuilderTest extends TestCase
     {
         $res = Foo::query()->orderBy('id', 'asc')->get();
 
-        $this->assertSame(1, $res->first()['id']);
+        $this->assertSame(1, $res->first()->source['id']);
 
         $res = Foo::query()->where('id', '<=', 5)->orderBy('id', 'desc')->get();
 
-        $this->assertSame(5, $res->first()['id']);
+        $this->assertSame(5, $res->first()->source['id']);
     }
 
     public function testNotEqual()
     {
         $res = Foo::query()->where('id', '!=', 1)->orderBy('id', 'asc')->get();
 
-        $this->assertSame(2, $res->first()['id']);
+        $this->assertSame(2, $res->first()->source['id']);
     }
 
     public function testClosure()
@@ -155,8 +155,8 @@ class BuilderTest extends TestCase
             ->get();
 
         $this->assertSame(2, $res->count());
-        $this->assertSame(2, $res->first()['id']);
-        $this->assertSame(5, $res->last()['id']);
+        $this->assertSame(2, $res->first()->source['id']);
+        $this->assertSame(5, $res->last()->source['id']);
     }
 
     public function testOrWhereClosure()
@@ -171,8 +171,8 @@ class BuilderTest extends TestCase
             ->get();
 
         $this->assertSame(2, $res->count());
-        $this->assertSame(2, $res->first()['id']);
-        $this->assertSame(5, $res->last()['id']);
+        $this->assertSame(2, $res->first()->source['id']);
+        $this->assertSame(5, $res->last()->source['id']);
     }
 
     public function testBulk()
@@ -184,10 +184,10 @@ class BuilderTest extends TestCase
 
         $this->assertTrue($res);
 
-        $first = Foo::query()->where('id', 6)->get()->first();
+        $first = Foo::query()->where('id', 6)->get()->first()->source;
         $this->assertSame($id, $first['summary']);
 
-        $first = Foo::query()->where('id', 7)->get()->first();
+        $first = Foo::query()->where('id', 7)->get()->first()->source;
         $this->assertSame($id2, $first['summary']);
     }
 }

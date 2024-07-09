@@ -142,7 +142,7 @@ class Builder
     }
 
     public function bulk(
-        array $docs,
+        array|Collection $values,
         #[ArrayShape([
             'refresh' => 'bool',
             'retry_on_conflict' => 'int',
@@ -152,15 +152,23 @@ class Builder
         $settings ??= $this->document->getConfig()->getUpdateSettings();
 
         $body = [];
-        foreach ($docs as $doc) {
+        foreach ($values as $value) {
+            if ($value instanceof Value) {
+                $id = $value->id;
+                $source = $value->source;
+            } else {
+                $id = $value[$this->document->getKey()];
+                $source = $value;
+            }
+
             $body[] = [
                 'index' => [
                     '_index' => $this->document->getIndex(),
-                    '_id' => $doc[$this->document->getKey()],
+                    '_id' => $id,
                 ],
             ];
 
-            $body[] = $doc;
+            $body[] = $source;
         }
 
         return $this->document->getWriteClient()->bulk([
@@ -170,7 +178,7 @@ class Builder
     }
 
     public function update(
-        array $doc,
+        array|Value $value,
         mixed $id = null,
         #[ArrayShape([
             'refresh' => 'bool',
@@ -178,7 +186,14 @@ class Builder
         ])]
         ?array $settings = null
     ): bool {
-        $id ??= $doc[$this->document->getKey()] ?? $this->getKeyValue();
+        if ($value instanceof Value) {
+            $id = $value->id;
+            $source = $value->source;
+        } else {
+            $id ??= $value[$this->document->getKey()] ?? $this->getKeyValue();
+            $source = $value;
+        }
+
         if ($id === null) {
             throw new RuntimeException('The document does not contain any ID');
         }
@@ -189,7 +204,7 @@ class Builder
             'index' => $this->document->getIndex(),
             'id' => $id,
             'body' => [
-                'doc' => $doc,
+                'doc' => $source,
                 'doc_as_upsert' => true,
             ],
             ...$settings,
@@ -202,13 +217,13 @@ class Builder
 
         $result = [];
         foreach ($response['hits']['hits'] as $hit) {
-            $result[] = $hit['_source'];
+            $result[] = new Value($hit['_id'], $hit['_source']);
         }
         return new Collection($result);
     }
 
     /**
-     * @return array{int, Collection<int, array>}
+     * @return array{int, Collection<int, Value>}
      */
     public function paginate(): array
     {
@@ -219,7 +234,7 @@ class Builder
         $total = $response['hits']['total']['value'];
         $result = [];
         foreach ($response['hits']['hits'] as $hit) {
-            $result[] = $hit['_source'];
+            $result[] = new Value($hit['_id'], $hit['_source']);
         }
 
         return [$total, new Collection($result)];
