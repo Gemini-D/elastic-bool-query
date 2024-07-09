@@ -208,7 +208,7 @@ class Builder
     }
 
     /**
-     * @return array{int, array}
+     * @return array{int, Collection<int, array>}
      */
     public function paginate(): array
     {

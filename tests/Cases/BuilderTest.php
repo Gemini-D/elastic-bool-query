@@ -90,9 +90,9 @@ class BuilderTest extends TestCase
 
     public function testPaginate()
     {
-        [$total, $res] = Foo::query()->where('summary', 'like', '*o*')->paginate();
+        [$total, $data] = Foo::query()->where('summary', 'like', '*o*')->paginate();
 
-        $this->assertSame(3, $res->count());
+        $this->assertSame(3, $data->count());
         $this->assertSame(3, $total);
     }
 
