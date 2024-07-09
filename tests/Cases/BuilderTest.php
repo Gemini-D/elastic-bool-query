@@ -89,6 +89,9 @@ class BuilderTest extends TestCase
 
         $res = Foo::query()->where('name', 'like', '*中文*')->get()->first();
         $this->assertSame(8, $res['id']);
+
+        // $res = Foo::query()->where('summary', 'like', '*中文*')->get();
+        // var_dump($res);
     }
 
     public function testOrWhere()

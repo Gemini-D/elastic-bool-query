@@ -49,9 +49,7 @@ enum Operator: string
             ],
             self::WILDCARD, self::LIKE => [
                 'wildcard' => [
-                    $key => [
-                        'value' => $value
-                    ],
+                    $key => mb_substr($value, 0, 20),
                 ],
             ],
             self::GT_SYMBOL, self::GT => [
