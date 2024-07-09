@@ -90,7 +90,7 @@ class BuilderTest extends TestCase
         $res = Foo::query()->where('name', 'like', '*中文*')->get()->first();
         $this->assertSame(8, $res['id']);
 
-        $res = Foo::query()->where('summary', 'match', '中文')->get();
+        $res = Foo::query()->where('summary', 'match', '中文')->get()->first();
         $this->assertSame(8, $res['id']);
     }
 
@@ -139,7 +139,7 @@ class BuilderTest extends TestCase
         $res = Foo::query()->where('id', '>', 4)->get();
         $this->assertSame(5, $res->count());
 
-        $res = Foo::query()->where('id', '>=', 4)->get();
+        $res = Foo::query()->where('id', '>=', 4)->where('id', '<', 8)->get();
         $this->assertSame(4, $res->count());
     }
 
