@@ -71,6 +71,17 @@ class BuilderTest extends TestCase
         $this->assertSame(['id' => 1, 'name' => 'foo', 'summary' => 'foo'], $res->first()->source);
     }
 
+    public function testGetArrayAccess()
+    {
+        $res = Foo::query()->where('id', 1)->get()->first();
+
+        $this->assertSame('1', $res['_id']);
+        $this->assertSame('foo', $res['name']);
+        $this->assertSame('foo', $res['summary']);
+        $this->assertSame(['_id' => '1', 'id' => 1, 'name' => 'foo', 'summary' => 'foo'], $res->toArray());
+        $this->assertSame(json_encode(['_id' => '1', 'id' => 1, 'name' => 'foo', 'summary' => 'foo']), json_encode($res));
+    }
+
     public function testOrWhere()
     {
         $res = Foo::query()->orWhere('id', 1)->orWhere('id', 2)->orderBy('id', 'asc')->get();

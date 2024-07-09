@@ -12,10 +12,12 @@ declare(strict_types=1);
 
 namespace Fan\ElasticBoolQuery;
 
+use ArrayAccess;
+use Fan\ElasticBoolQuery\Exception\RuntimeException;
 use Hyperf\Contract\Arrayable;
 use JsonSerializable;
 
-class Value implements JsonSerializable, Arrayable
+class Value implements JsonSerializable, Arrayable, ArrayAccess
 {
     public function __construct(public mixed $id, public array $source)
     {
@@ -28,9 +30,43 @@ class Value implements JsonSerializable, Arrayable
 
     public function toArray(): array
     {
-        return [
-            'id' => $this->id,
-            'source' => $this->source,
-        ];
+        return array_merge(['_id' => $this->id], $this->source);
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        if ($offset === '_id') {
+            return true;
+        }
+
+        return isset($this->source[$offset]);
+    }
+
+    public function offsetGet(mixed $offset): mixed
+    {
+        $result = $this->source[$offset] ?? null;
+        if ($result === null && $offset === '_id') {
+            return $this->id;
+        }
+
+        return $result;
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        if (array_key_exists($offset, $this->source)) {
+            $this->source[$offset] = $value;
+        } elseif ($offset === '_id') {
+            $this->id = $value;
+        }
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        if (array_key_exists($offset, $this->source)) {
+            unset($this->source[$offset]);
+        } elseif ($offset === '_id') {
+            throw new RuntimeException('Cannot unset _id from `Value`');
+        }
     }
 }
