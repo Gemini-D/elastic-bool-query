@@ -20,6 +20,7 @@ enum Operator: string
     case NOT_EQUAL2 = '<>';
     case WILDCARD = 'wildcard';
     case LIKE = 'like';
+    case MATCH = 'match';
     case GT_SYMBOL = '>';
     case GT = 'gt';
     case GTE_SYMBOL = '>=';
@@ -49,6 +50,11 @@ enum Operator: string
             ],
             self::WILDCARD, self::LIKE => [
                 'wildcard' => [
+                    $key => mb_substr($value, 0, 20),
+                ],
+            ],
+            self::MATCH => [
+                'match' => [
                     $key => mb_substr($value, 0, 20),
                 ],
             ],
